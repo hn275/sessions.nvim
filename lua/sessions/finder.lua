@@ -3,9 +3,8 @@ local finder = require("telescope.finders")
 local conf = require("telescope.config").value
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
-local theme = require("telescope.themes").get_cursor
+local theme = require("telescope.themes").get_ivy
 
-local subscribe = require("sessions.autocmd").subscribe
 local c = require("sessions.constants")
 
 local load_session = require("sessions.util").load_session
