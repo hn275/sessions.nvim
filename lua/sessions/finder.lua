@@ -31,7 +31,7 @@ local telescope = function(title, callback)
 				finder = finder.new_table({
 					results = all_sessions,
 				}),
-				-- sorter = conf.generic_sorter(config),
+				sorter = conf.generic_sorter(config),
 				attach_mappings = function(prompt_bufnr)
 					actions.select_default:replace(function()
 						actions.close(prompt_bufnr)
@@ -73,16 +73,10 @@ end
 
 M.new_session = function()
 	telescope("Save session", function(session, query)
-		if session ~= nil then
-			vim.cmd(("silent mksession! %s/%s"):format(c.DIR, session))
-			print(("Session overloaded: %s"):format(session))
-		else
-			vim.cmd(("silent mksession! %s/%s"):format(c.DIR, query))
-			print(("Created session: %s"):format(query))
-		end
-		local sub = session or query
-		print(sub)
-		subscribe(sub)
+		local s = session or query
+		vim.cmd(("silent mksession! %s/%s"):format(c.DIR, s))
+		print(("Session overloaded: %s"):format(s))
+		load_session(s)
 	end)
 end
 
