@@ -73,14 +73,14 @@ end
 M.new_session = function()
 	telescope("Save session", function(session, query)
 		local s = session or query
-		vim.cmd(("silent mksession! %s/%s"):format(c.DIR, s))
-		print(("Session overloaded: %s"):format(s))
+		make_session(s)
+		print(("Session overwritten: %s"):format(s))
 		load_session(s)
 	end)
 end
 
 M.last_session = function()
-	vim.cmd(("silent source %s/%s"):format(c.DIR, c.CACHED_SESSION))
+	load_session(c.CACHED_SESSION)
 	print("Sourced cached session.")
 end
 

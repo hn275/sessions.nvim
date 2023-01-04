@@ -1,10 +1,12 @@
 local c = require("sessions.constants")
 local fn = require("sessions.finder")
+local make_session = require("sessions.util").make_session
 
 local flag_map = {
 	["list"] = fn.find_session,
 	["new"] = fn.new_session,
 	["delete"] = fn.delete_session,
+	["last"] = fn.last_session,
 }
 
 local get_all_flags = function()
@@ -40,7 +42,7 @@ M.setup = function()
 		group = c.SESSION_GR,
 		pattern = { "*.*" },
 		callback = function()
-			vim.cmd(("silent mksession! %s/%s"):format(c.DIR, c.CACHED_SESSION))
+			make_session(c.CACHED_SESSION)
 		end,
 	})
 
