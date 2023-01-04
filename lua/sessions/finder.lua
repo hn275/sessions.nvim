@@ -30,7 +30,7 @@ local telescope = function(title, callback)
 				finder = finder.new_table({
 					results = all_sessions,
 				}),
-				sorter = conf.generic_sorter(config),
+				sorter = conf and conf.generic_sorter(config),
 				attach_mappings = function(prompt_bufnr)
 					actions.select_default:replace(function()
 						actions.close(prompt_bufnr)
