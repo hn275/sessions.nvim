@@ -9,6 +9,7 @@ local subscribe = require("sessions.autocmd").subscribe
 local c = require("sessions.constants")
 
 local load_session = require("sessions.util").load_session
+local make_session = require("sessions.util").make_session
 
 local telescope = function(title, callback)
 	local all_sessions = {}
@@ -38,7 +39,12 @@ local telescope = function(title, callback)
 						local query = action_state.get_current_line()
 
 						if entry ~= nil then
-							callback(entry[1], nil)
+							local matched = entry[1]:find("^[*]")
+							if matched then
+								print("Session in used.")
+							else
+								callback(entry[1], nil)
+							end
 						else
 							callback(nil, query)
 						end
@@ -55,21 +61,6 @@ M = {}
 M.find_session = function()
 	telescope("Find session", function(session, _)
 		load_session(session)
-		vim.cmd(("silent !rm %s/%s"):format(c.DIR, session))
-		-- cached in temp session
-		vim.api.nvim_create_autocmd({ "BufEnter", "BufLeave" }, {
-			group = c.SESSION_GR,
-			callback = function()
-				vim.cmd(("silent mksession! %s/.%s"):format(c.DIR, session))
-			end,
-		})
-		-- rm cached, restore shada
-		vim.api.nvim_create_autocmd({ "VimLeave" }, {
-			group = c.SESSION_GR,
-			callback = function()
-				vim.cmd(("!mv %s/.%s %s/%s"):format(c.DIR, session, c.DIR, session))
-			end,
-		})
 	end)
 end
 
