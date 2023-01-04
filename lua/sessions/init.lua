@@ -1,6 +1,7 @@
 local c = require("sessions.constants")
 local fn = require("sessions.finder")
 local make_session = require("sessions.util").make_session
+local saved_sessions = require("sessions.util").get_all_sessions
 
 local flag_map = {
 	["list"] = fn.find_session,
@@ -47,11 +48,19 @@ M.setup = function()
 	})
 
 	-- User command
-	vim.api.nvim_create_user_command("Session", function(opt)
+	vim.api.nvim_create_user_command("SessionFind", function()
+		fn.find_session()
+	end, {})
+
+	vim.api.nvim_create_user_command("SessionNew", function(opt)
+		local new_session = opt.args
+		fn.new_session(new_session)
+	end, { nargs = 1, complete = saved_sessions })
+
+	vim.api.nvim_create_user_command("SessionDel", function(opt)
 		local arg = opt.args
-		flag_map[arg]()
-	end, { nargs = 1, complete = get_all_flags })
+		fn.delete_session(arg)
+	end, { nargs = 1, complete = saved_sessions })
 end
 
-M.setup()
 return M
