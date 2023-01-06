@@ -3,22 +3,6 @@ local fn = require("sessions.finder")
 local make_session = require("sessions.util").make_session
 local saved_sessions = require("sessions.util").get_all_sessions
 
-local flag_map = {
-	["list"] = fn.find_session,
-	["new"] = fn.new_session,
-	["delete"] = fn.delete_session,
-	["last"] = fn.last_session,
-}
-
-local get_all_flags = function()
-	local flags = {}
-	for k in pairs(flag_map) do
-		table.insert(flags, k)
-	end
-
-	return flags
-end
-
 -- check for file existence
 local f = io.popen("ls " .. c.DIR)
 
@@ -35,11 +19,11 @@ if output ~= nil then
 	end
 end
 
-M = {}
+Sessions = {}
 
-M.setup = function()
+Sessions.setup = function()
 	-- Autocmd
-	vim.api.nvim_create_autocmd({ "VimEnter", "VimLeave" }, {
+	vim.api.nvim_create_autocmd({ "BufEnter", "BufLeave" }, {
 		group = c.SESSION_GR,
 		pattern = { "*.*" },
 		callback = function()
@@ -48,9 +32,7 @@ M.setup = function()
 	})
 
 	-- User command
-	vim.api.nvim_create_user_command("SessionFind", function()
-		fn.find_session()
-	end, {})
+	vim.api.nvim_create_user_command("SessionFind", fn.find_session, {})
 
 	vim.api.nvim_create_user_command("SessionNew", function(opt)
 		local new_session = opt.args
@@ -61,6 +43,8 @@ M.setup = function()
 		local arg = opt.args
 		fn.delete_session(arg)
 	end, { nargs = 1, complete = saved_sessions })
+
+	vim.api.nvim_create_user_command("SessionLast", fn.last_session, {})
 end
 
-return M
+return Sessions
